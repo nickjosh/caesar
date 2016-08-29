@@ -15,25 +15,37 @@
 # limitations under the License.
 from caesar import encrypt
 import webapp2
+import cgi
+
+form= """
+<form action = "/" method = "post">
+    <label>
+        Rotate by:<input type = "number" name= "rot" ></input>
+    </label>
+        <br>
+    <label>
+        Text:<textarea row = "10" cols="50" name="text" type = "text">%(value)sb</textarea>
+    </label>
+    <input type="submit" value="submit">
+</form>
+"""
 
 class Caesar(webapp2.RequestHandler):
     def get(self):
-        
+        self.response.write(form)
 
-
-form="""
-<form action="/" method="post">
-<label>Rotate by:input type="text">
-
-</label>
-<textarea rows="8" cols="60">
-<input type="submit" value="Submit">
-
-</form>
-"""
-self.response.write(form)
     def post(self):
+       rot = self.request.get("rot")
+       text = self.request.get("text")
+       rot = int(rot)
+       answer = encrypt(text,rot)
+       close = cgi.escape(answer)
+       self.response.write(form % {"value":answer})
+
+
+    #def post(self):
+        #self.response.write(form)
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+('/', Caesar)
 ], debug=True)
